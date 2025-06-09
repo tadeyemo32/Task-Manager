@@ -16,12 +16,18 @@ char description[descriptionSize];//Task information
 
 }Task;
 
-int createTask(int id,char description[descriptionSize]  ,char title[titleSize]){
+Task* taskList[100]; 
+int taskVal = 0; 
+
+
+int createTask(int id,char description[descriptionSize]  ,char title[titleSize]){ // create a task 
 
 Task* newTask = malloc(sizeof(Task));
 
+
 if (!newTask){
     printf("Memory Allocation failed\n");
+    return 1;
 }
 
 newTask-> id = id;
@@ -33,8 +39,16 @@ newTask->title[titleSize - 1] = '\0';
 strncpy(newTask->description, description, descriptionSize - 1);
 newTask->description[descriptionSize - 1] = '\0';
 
-    return 0; 
+taskList[taskVal] = newTask; 
+taskVal++;
+
+return 0;
 }
+
+
+
+
+
 
 
 
@@ -48,6 +62,7 @@ char man[descriptionSize] = "Head to the gym at 10am";
 char mum[titleSize] = "Gym";
 
     createTask(10000,man,mum);
+    
 
     return 0;
 }
