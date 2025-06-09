@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include<stdlib.h>
+#include <string.h>
+
+
 #define titleSize 100 
 #define descriptionSize 255
+
 
 typedef struct Task {
 
@@ -20,6 +24,14 @@ if (!newTask){
     printf("Memory Allocation failed\n");
 }
 
+newTask-> id = id;
+newTask->state =0;
+
+strncpy(newTask->title, title, titleSize - 1);
+newTask->title[titleSize - 1] = '\0';
+
+strncpy(newTask->description, description, descriptionSize - 1);
+newTask->description[descriptionSize - 1] = '\0';
 
     return 0; 
 }
