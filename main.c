@@ -87,33 +87,64 @@ return newTask;
 
 
 
+// adds node to the start of the linked list 
+Node* insertNodeAtHead(Node* head,Node* nodeToBeInserted){
 
 
+nodeToBeInserted->next = head;
+
+return nodeToBeInserted;
+}
 
 
-void printList(Node* node) {
-    while (node) {
-        printf("%s -> ", node->task->title);
-        node = node->next;
-    }
-    printf("null\n");
+Node* insertNodeAtEnd( Node* head,Node* newNode){
+
+ if (head == NULL){
+    return newNode;
+ }
+Node* current = head;
+
+while (current->next != NULL) {
+    current = current->next;  
+}
+ 
+current->next = newNode;
+newNode->next = NULL;  
+
+return head;
+
 }
 
 
 
 
 
-
+void printList(Node* node) {
+    while (node) {
+        printf("ID: %d | Title: %s | State: %s\n", 
+               node->task->id, 
+               node->task->title,
+               node->task->state ? "Done" : "Pending");
+        node = node->next;
+    }
+    printf("End of List.\n");
+}
 
 int main(){
     char man[descriptionSize] = "Head to the gym at 10am";
     char mum[titleSize] = "Gym";
     char mum2[titleSize] = "School";
+    char num3[titleSize] = "Hospital";
+    char num4[titleSize] = "Police Station";
 
-    createNode(createTask(10000, man, mum));
+    createNode(createTask(10000, man, "Office"));
+    createNode(createTask(10001, man, mum));
     createNode(createTask(10001, man, mum2));
+    createNode(createTask(10001, man, num3));
+    createNode(createTask(10001, man, num4));
 
     printList(head); // Print entire list
+printf("%d\n",numOfTask);
 
     return 0;
 }
