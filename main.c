@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include<stdlib.h>
 #include <string.h>
+#include<unistd.h>
 
 
 #define titleSize 100 
 #define descriptionSize 255
+
 
 
 typedef struct Task {
@@ -16,18 +18,58 @@ char description[descriptionSize];//Task information
 
 }Task;
 
-Task* taskList[100]; 
-int taskVal = 0; 
+
+typedef struct Node {
+
+     Task* task; 
+
+    struct Node* next ; 
+
+    
+    }Node;
 
 
-int createTask(int id,char description[descriptionSize]  ,char title[titleSize]){ // create a task 
+int numOfTask = 0; 
+Node* lastAddedNode ; 
 
+
+
+Node* head = NULL;
+
+
+Node* createNode(Task* task){
+Node* newNode = (Node*)(malloc(sizeof(Node))) ;
+if (!newNode){
+    printf("Malloc Failed ");
+    exit(1);
+}
+newNode->task = task; 
+
+
+if (!numOfTask){
+head = newNode;
+}else{
+    lastAddedNode->next = newNode;
+}
+
+lastAddedNode = newNode;
+numOfTask++;
+return  newNode;
+}
+
+
+
+
+
+
+
+Task* createTask(int id,char description[descriptionSize]  ,char title[titleSize]){ // create a task 
 Task* newTask = malloc(sizeof(Task));
 
 
 if (!newTask){
     printf("Memory Allocation failed\n");
-    return 1;
+    exit(1);
 }
 
 newTask-> id = id;
@@ -39,10 +81,8 @@ newTask->title[titleSize - 1] = '\0';
 strncpy(newTask->description, description, descriptionSize - 1);
 newTask->description[descriptionSize - 1] = '\0';
 
-taskList[taskVal] = newTask; 
-taskVal++;
 
-return 0;
+return newTask;
 }
 
 
@@ -51,6 +91,14 @@ return 0;
 
 
 
+void printList(Node* node) {
+    while (node) {
+        printf("%s -> ", node->task->title);
+        node = node->next;
+    }
+    printf("null\n");
+}
+
 
 
 
@@ -58,11 +106,14 @@ return 0;
 
 
 int main(){
-char man[descriptionSize] = "Head to the gym at 10am";
-char mum[titleSize] = "Gym";
+    char man[descriptionSize] = "Head to the gym at 10am";
+    char mum[titleSize] = "Gym";
+    char mum2[titleSize] = "School";
 
-    createTask(10000,man,mum);
-    
+    createNode(createTask(10000, man, mum));
+    createNode(createTask(10001, man, mum2));
+
+    printList(head); // Print entire list
 
     return 0;
 }
