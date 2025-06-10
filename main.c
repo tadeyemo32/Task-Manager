@@ -96,7 +96,7 @@ nodeToBeInserted->next = head;
 return nodeToBeInserted;
 }
 
-
+//instert node at the end of linked list
 Node* insertNodeAtEnd( Node* head,Node* newNode){
 
  if (head == NULL){
@@ -114,6 +114,78 @@ newNode->next = NULL;
 return head;
 
 }
+
+void removeNode(int pos) {
+    if (pos < 0 || pos >= numOfTask || head == NULL) return;
+
+    if (pos == 0) {
+        Node* temp = head;
+        head = head->next;
+        free(temp->task);
+        free(temp);
+    } else {
+        Node* current = head;
+        for (int i = 0; i < pos - 1 && current->next != NULL; i++) {
+            current = current->next;
+        }
+
+        Node* nodeToRemove = current->next;
+        current->next = nodeToRemove->next;
+
+        if (nodeToRemove == lastAddedNode) {
+            lastAddedNode = current;  // Update lastAddedNode if needed
+        }
+
+        free(nodeToRemove->task);
+        free(nodeToRemove);
+    }
+
+    numOfTask--;
+}
+
+
+
+
+
+// insert node at specific index 
+
+Node* insertNodeAtPos(Node* head,Node* newNode,int pos){
+  
+
+if(pos<=0){
+    newNode->next = head;
+    numOfTask++;
+    return newNode;
+}
+
+if(pos>=numOfTask){
+    return insertNodeAtEnd(head,newNode);
+}
+
+  Node* current = head;
+  int index = 0;  
+
+  while (current!=NULL&&index<pos-1)
+  {
+   current=current->next;
+   index++;
+  }
+  
+  if (current != NULL) {
+    newNode->next = current->next;
+    current->next = newNode;
+    numOfTask++;
+}
+
+
+return head;
+}
+
+
+
+
+
+
 
 
 
@@ -141,8 +213,16 @@ int main(){
     createNode(createTask(10001, man, mum));
     createNode(createTask(10001, man, mum2));
     createNode(createTask(10001, man, num3));
-    createNode(createTask(10001, man, num4));
+   Node* test = createNode(createTask(10001, man, num4));
 
+
+    Task* midTask = createTask(10003, "Lunch meeting at 1pm", "Meeting");
+    Node* midNode = (Node*)malloc(sizeof(Node));
+    midNode->task = midTask;
+    midNode->next = NULL;
+    
+  removeNode(1);
+ 
     printList(head); // Print entire list
 printf("%d\n",numOfTask);
 
