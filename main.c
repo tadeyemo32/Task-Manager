@@ -284,15 +284,75 @@ FILE* load() {
 
 
 int main() {
+    int choice;
 
+    while (1) {
+        printf("\n--- TASK MANAGER ---\n");
+        printf("1. Add Task\n");
+        printf("2. Remove Task\n");
+        printf("3. View All Tasks\n");
+        printf("4. Save Tasks to File\n");
+        printf("5. Load Tasks from File\n");
+        printf("6. Exit\n");
+        printf("Choose an option: ");
+        scanf("%d", &choice);
+        getchar(); // consume newline after scanf
 
-    printf("Loading tasks from file...\n");
-    load();  // Load from app.txt
-    printList(head);  // Print loaded tasks
+        if (choice == 6) {
+            printf("Exiting...\n");
+            break;
+        }
+
+        switch (choice) {
+            case 1: {
+                char title[titleSize];
+                char description[descriptionSize];
+
+                printf("Enter task title: ");
+                fgets(title, sizeof(title), stdin);
+                title[strcspn(title, "\n")] = '\0'; // remove newline
+
+                printf("Enter task description: ");
+                fgets(description, sizeof(description), stdin);
+                description[strcspn(description, "\n")] = '\0'; // remove newline
+
+                int id = idNum(title);
+                Task* task = createTask(id, description, title);
+                createNode(task);
+                printf("Task added.\n");
+                break;
+            }
+
+            case 2: {
+                int pos;
+                printf("Enter task position to remove (0-based): ");
+                scanf("%d", &pos);
+                removeNode(pos);
+                save(head); // <-- Automatically save after deletion
+                printf("Task removed (if position was valid) and file updated.\n");
+                break;
+            }
+
+            case 3:
+                printList(head);
+                break;
+
+            case 4:
+                save(head);
+                printf("Tasks saved to app.txt\n");
+                break;
+
+            case 5:
+                load();
+                printf("Tasks loaded from app.txt\n");
+                break;
+
+            default:
+                printf("Invalid option. Try again.\n");
+        }
+    }
 
     return 0;
-
-
-
 }
+
 
