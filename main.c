@@ -4,9 +4,10 @@
 #include<unistd.h>
 
 
+
 #define titleSize 100 
 #define descriptionSize 255
-
+FILE *fptr;
 
 
 typedef struct Task {
@@ -181,16 +182,39 @@ if(pos>=numOfTask){
 return head;
 }
 
+Node* searchById(Node* head, int id) {
+    Node* current = head;
+    while (current != NULL) {
+        if (current->task->id == id) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL; // Not found
+}
 
 
 
+Node* searchByTitle(Node* head, const char* title) {
+    Node* current = head;
+    while (current != NULL) {
+        if (strcmp(current->task->title, title) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL; // Not found
+}
+int idNum(char title[]) {
+    unsigned long hash = 5381; 
+    int c;
 
+    while ((c = *title++)) {
+        hash = ((hash << 5) + hash) + c; 
+    }
 
-
-
-
-
-
+    return hash % 100000; 
+}
 void printList(Node* node) {
     while (node) {
         printf("ID: %d | Title: %s | State: %s\n", 
@@ -202,29 +226,73 @@ void printList(Node* node) {
     printf("End of List.\n");
 }
 
-int main(){
-    char man[descriptionSize] = "Head to the gym at 10am";
-    char mum[titleSize] = "Gym";
-    char mum2[titleSize] = "School";
-    char num3[titleSize] = "Hospital";
-    char num4[titleSize] = "Police Station";
 
-    createNode(createTask(10000, man, "Office"));
-    createNode(createTask(10001, man, mum));
-    createNode(createTask(10001, man, mum2));
-    createNode(createTask(10001, man, num3));
-   Node* test = createNode(createTask(10001, man, num4));
-
-
-    Task* midTask = createTask(10003, "Lunch meeting at 1pm", "Meeting");
-    Node* midNode = (Node*)malloc(sizeof(Node));
-    midNode->task = midTask;
-    midNode->next = NULL;
+FILE* save(Node* head){
     
-  removeNode(1);
- 
-    printList(head); // Print entire list
-printf("%d\n",numOfTask);
+    Node* current = head;
+    fptr = fopen("app.txt","w");
+    if (fptr == NULL) {
+        printf("The file is not opened.");
+        exit(1);
+    }else{
+        printf("The file is open");
+    }
+
+    while (current != NULL) {
+        int id = current->task->id;
+        int state = current->task->state;
+        char* title = current->task->title;
+        char* description = current->task->description;
+        fprintf(fptr, "Id:%d|", id);
+        fprintf(fptr, "Title:%s|", title);
+        fprintf(fptr, "Description:%s|", description);
+        fprintf(fptr, "State:%d\n", state);
+
+        current = current->next;
+    }
+
+    fclose(fptr);
+
+    return fptr;
+}
+
+FILE* load() {
+    fptr = fopen("app.txt", "r");
+    if (fptr == NULL) {
+        printf("Failed to open app.txt\n");
+        return NULL;
+    }
+
+    char buffer[512];
+    while (fgets(buffer, sizeof(buffer), fptr)) {
+        int id, state;
+        char title[titleSize], description[descriptionSize];
+
+        int fieldsParsed = sscanf(buffer, "Id:%d|Title:%[^|]|Description:%[^|]|State:%d", &id, title, description, &state);
+        if (fieldsParsed == 4) {
+            Task* task = createTask(id, description, title);
+            task->state = state;
+            createNode(task);
+        }
+    }
+
+    fclose(fptr);
+    return fptr;
+}
+
+
+
+
+int main() {
+
+
+    printf("Loading tasks from file...\n");
+    load();  // Load from app.txt
+    printList(head);  // Print loaded tasks
 
     return 0;
+
+
+
 }
+
